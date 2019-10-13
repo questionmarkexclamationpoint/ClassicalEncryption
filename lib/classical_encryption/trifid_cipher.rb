@@ -23,8 +23,9 @@ module ClassicalEncryption
         .map{|c| @alphabet_hash[c]}
         .flatten
         .each_slice(@group_size * 3)
-        .map{|s| s.each_slice(@group_size).to_a.transpose}
+        .map{|s| s.each_slice(@group_size).to_a.map{|ss| ss << nil while ss.length < @group_size; ss}.transpose}
         .flatten
+        .reject(&:nil?)
         .each_slice(3)
         .map{|s| @alphabet[s[0]][s[1]][s[2]]}
         .join

@@ -15,9 +15,16 @@ module ClassicalEncryption
         .join
     end
     def decrypt(ciphertext)
-      lengths = ciphertext.length.times.inject(Array.new(@height, 0)){|arr, i| arr[index(i)] += 1; arr}
-      offset = 0
-      rows = lengths.map{|l| s = ciphertext[offset..offset + l - 1]; offset += l; s.chars}
+      rows = ciphertext.length
+        .times
+        .inject(Array.new(@height, 0)){|arr, i| arr[index(i)] += 1; arr}
+        .inject([0, []]) do |pair, l|
+          offset, rows = pair
+          s = ciphertext[offset..offset + l - 1]
+          offset += l
+          rows << s.chars
+          [offset, rows]
+        end.last
       ciphertext.length.times.inject(''){|s, i| s + rows[index(i)].shift}
     end
     
